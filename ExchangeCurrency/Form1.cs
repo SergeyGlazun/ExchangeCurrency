@@ -1,4 +1,6 @@
 ﻿using Model.Models;
+using ModelCurrency.Checking_the_connection;
+using ModelCurrency.Connection;
 using PresentationCurrency;
 using PresentationCurrency.Calculation;
 using PresentationCurrency.ConvetTipe;
@@ -13,16 +15,16 @@ namespace ExchangeCurrency
     {
 
         Conversion conection = new Conversion();
-
-        ConnectParseHTML connectParseHTML = new ConnectParseHTML();
-
+      
         CalculationCurrency calculation = new CalculationCurrency();
-        
+       
+        CheckingConnection connection = new CheckingConnection();
         public Form1()
         {
             InitializeComponent();
 
-            dataGridView1.DataSource = connectParseHTML.Connect();
+            connection.Checking();           
+            dataGridView1.DataSource = connection.Currency;
             dataGridView1.Columns[0].HeaderText = "Валюта";
             dataGridView1.Columns[1].HeaderText = "Покупка";
             dataGridView1.Columns[2].HeaderText = "Продажа";
@@ -47,33 +49,33 @@ namespace ExchangeCurrency
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
-           
+        {          
             textBoxResalt.Text = calculation.ConvertCurrency(conection.Sum, conection.OfName, conection.InName).ToString();
         }
 
         private void comboBoxOf_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AbstractCondetToDecimal abstractCondet = new CondetToDecimalSell();
-            conection.OfName= abstractCondet.intitialName(comboBoxOf.Text);
+            AbstractCondetToDecimal abstractCondet = new CondetToDecimalSell();          
+            conection.OfName= abstractCondet.intitialName(comboBoxOf.Text, connection.Currency);
                       
         }
 
         private void comboBoxIn_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+           
             AbstractCondetToDecimal abstractCondet = new ConvertToDecimalBuy();
-            conection.InName =  abstractCondet.intitialName(comboBoxIn.Text);
+            conection.InName =  abstractCondet.intitialName(comboBoxIn.Text, connection.Currency);
            
         }
 
         private void AddListBox(ComboBox comboBox)
         {
-            var nameCurrency = connectParseHTML.Connect().GroupBy(item => item.Name).ToList();
+            var nameCurrency = connection.Currency.GroupBy(item => item.Cur_Name).ToList();
 
             foreach (var item in nameCurrency)
             {
                 comboBox.Items.Add(item.Key);
+               
             }
         }
     }

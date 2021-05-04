@@ -28,10 +28,10 @@ namespace Model.Models
                 Match name = rateMatchesName[i];
                 students.Add(new Currency
                 {
-                    Sell = sell.Groups[1].Value,
+                    Cur_OfficialRate = sell.Groups[1].Value,
                     Buy = buy.Groups[1].Value,
-                    Categori = categori.Groups[1].Value,
-                    Name = name.Groups[1].Value
+                    Cur_Scale = categori.Groups[1].Value,
+                    Cur_Name = name.Groups[1].Value
                 });
             }
 
