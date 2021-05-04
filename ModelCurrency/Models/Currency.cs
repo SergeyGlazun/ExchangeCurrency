@@ -1,6 +1,8 @@
-﻿namespace ExchangeCurrency.Bank
+﻿
+
+namespace Model.Models
 {
-    class Currency
+    public class Currency
     {
         public string Name { get; set; }
 
@@ -16,3 +18,4 @@
         }
     }
 }
+

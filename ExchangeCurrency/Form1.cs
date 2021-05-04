@@ -1,30 +1,38 @@
-﻿using ExchangeCurrency.Bank;
+﻿using Model.Models;
+using PresentationCurrency;
+using PresentationCurrency.Calculation;
+using PresentationCurrency.ConvetTipe;
+using PresentationCurrency.Models;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ExchangeCurrency
 {
     public partial class Form1 : Form
     {
-       
-        Conection conection = new Conection();
 
+        Conversion conection = new Conversion();
+
+        ConnectParseHTML connectParseHTML = new ConnectParseHTML();
+
+        CalculationCurrency calculation = new CalculationCurrency();
+        
         public Form1()
         {
             InitializeComponent();
 
-            conection.LodingStart(dataGridView1, comboBoxOf);
-        }             
-       
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
+            dataGridView1.DataSource = connectParseHTML.Connect();
+            dataGridView1.Columns[0].HeaderText = "Валюта";
+            dataGridView1.Columns[1].HeaderText = "Покупка";
+            dataGridView1.Columns[2].HeaderText = "Продажа";
+            dataGridView1.Columns[3].HeaderText = "единиц";
             
-            conection.LodingIn(comboBoxIn);
 
-        }
-       
+            AddListBox(comboBoxOf);
+            AddListBox(comboBoxIn);
+        }             
+                    
         private void textBoxInput_TextChanged(object sender, EventArgs e)
         {
             try
@@ -40,21 +48,33 @@ namespace ExchangeCurrency
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-            textBoxResalt.Text = conection.ConvertCurrency().ToString();
+           
+            textBoxResalt.Text = calculation.ConvertCurrency(conection.Sum, conection.OfName, conection.InName).ToString();
         }
 
         private void comboBoxOf_SelectedIndexChanged(object sender, EventArgs e)
         {
-          
-            conection.intitialOfName(comboBoxOf.Text);
-            
+            AbstractCondetToDecimal abstractCondet = new CondetToDecimalSell();
+            conection.OfName= abstractCondet.intitialName(comboBoxOf.Text);
+                      
         }
 
         private void comboBoxIn_SelectedIndexChanged(object sender, EventArgs e)
         {
-            conection.intitialInName(comboBoxIn.Text);
+
+            AbstractCondetToDecimal abstractCondet = new ConvertToDecimalBuy();
+            conection.InName =  abstractCondet.intitialName(comboBoxIn.Text);
            
+        }
+
+        private void AddListBox(ComboBox comboBox)
+        {
+            var nameCurrency = connectParseHTML.Connect().GroupBy(item => item.Name).ToList();
+
+            foreach (var item in nameCurrency)
+            {
+                comboBox.Items.Add(item.Key);
+            }
         }
     }
 }

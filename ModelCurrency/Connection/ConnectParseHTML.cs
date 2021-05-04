@@ -1,27 +1,21 @@
-﻿using System;
+﻿using Model.Сonnection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace ExchangeCurrency.Bank
+namespace Model.Models
 {
-    class LodingCurrency
+    public class ConnectParseHTML : IConnection
     {
-        public List<Currency> Currencies { get; set; }
-
-        public LodingCurrency()
+        public IEnumerable<Currency> Connect()
         {
-            Currencies = new List<Currency>();
-
-            BPS_Bank_BuySell();
-           
-        }
-                                 
-        public void BPS_Bank_BuySell()
-        {
+            List<Currency> students = new List<Currency>();
             System.Net.WebClient wc = new System.Net.WebClient();
             String Response = wc.DownloadString("https://www.bps-sberbank.by/");
-          
+
             MatchCollection rateMatchesSell = Regex.Matches(Response, @"<div class=""BlockCurrencyExchangeRates__rate-item_sell-rate"">([0-9]+,[0-9]+)</div>");
             MatchCollection rateMatchesBuy = Regex.Matches(Response, @"<div class=""BlockCurrencyExchangeRates__rate-item_buy-rate"">([0-9]+,[0-9]+)</div>");
             MatchCollection rateMatchesCategory = Regex.Matches(Response, @"<span>([0-9]+)");
@@ -32,18 +26,16 @@ namespace ExchangeCurrency.Bank
                 Match buy = rateMatchesBuy[i];
                 Match categori = rateMatchesCategory[i];
                 Match name = rateMatchesName[i];
-                Currencies.Add(new Currency
+                students.Add(new Currency
                 {
                     Sell = sell.Groups[1].Value,
                     Buy = buy.Groups[1].Value,
-                    Categori= categori.Groups[1].Value,
+                    Categori = categori.Groups[1].Value,
                     Name = name.Groups[1].Value
                 });
             }
-            
+
+            return students;
         }
-
-       
-
     }
 }
